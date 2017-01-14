@@ -40,8 +40,8 @@ public class SearchRestaurants extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		// allow access only if session exists
-		if (!RpcParser.sessionValid(request, connection)) {
+		//  allow access only if user sends the request is the user logged in
+		if (!ValidateSession.sessionValid(request, connection)) {
 			response.setStatus(403);
 			return;
 		}

@@ -41,9 +41,9 @@ public class VisitHistory extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// allow access only if session exists
+		// allow access only if user sends the request is the user logged in
 		HttpSession session = request.getSession();
-		if (!RpcParser.sessionValid(request, connection)) {
+		if (!ValidateSession.sessionValid(request, connection)) {
 			response.setStatus(403);
 			return;
 		}
@@ -67,13 +67,21 @@ public class VisitHistory extends HttpServlet {
 		try {
 			// allow access only if session exists
 			HttpSession session = request.getSession();
-			if (!RpcParser.sessionValid(request, connection)) {
+			if (session.getAttribute("user") == null) {
 				response.setStatus(403);
 				return;
 			}
 			JSONObject input = RpcParser.parseInput(request);
+			// allow access only if user sends the request is the user logged in
+			String userId = (String) session.getAttribute("user");
+			if (input.has("user_id")) {
+				String requestUser = (String) input.get("user_id");
+				if (userId == null || !userId.equals(requestUser)) {
+					response.setStatus(403);
+					return;
+				}
+			}
 			if (input.has("visited")) {
-				String userId = (String) session.getAttribute("user");
 				JSONArray array = (JSONArray) input.get("visited");
 				List<String> visitedRestaurants = new ArrayList<>();
 				for (int i = 0; i < array.length(); i++) {
@@ -95,13 +103,21 @@ public class VisitHistory extends HttpServlet {
 		try {
 			// allow access only if session exists
 			HttpSession session = request.getSession();
-			if (!RpcParser.sessionValid(request, connection)) {
+			if (session.getAttribute("user") == null) {
 				response.setStatus(403);
 				return;
 			}
+			// allow access only if user sends the request is the user logged in
 			JSONObject input = RpcParser.parseInput(request);
+			String userId = (String) session.getAttribute("user");
+			if (input.has("user_id")) {
+				String requestUser = (String) input.get("user_id");
+				if (userId == null || !userId.equals(requestUser)) {
+					response.setStatus(403);
+					return;
+				}
+			}
 			if (input.has("visited")) {
-				String userId = (String) session.getAttribute("user");
 				JSONArray array = (JSONArray) input.get("visited");
 				List<String> visitedRestaurants = new ArrayList<>();
 				for (int i = 0; i < array.length(); i++) {

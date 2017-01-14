@@ -5,12 +5,10 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import db.DBConnection;
 
 /**
  * A utility class to handle rpc related parsing logics.
@@ -56,15 +54,5 @@ public class RpcParser {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public static boolean sessionValid(HttpServletRequest request, DBConnection connection) {
-		HttpSession session = request.getSession();
-		String requestUser = request.getParameter("user_id");
-		Object currentUser = session.getAttribute("user");
-		if (currentUser == null || !currentUser.toString().equals(requestUser)) {
-			return false;
-		}
-		return true;
 	}
 }
